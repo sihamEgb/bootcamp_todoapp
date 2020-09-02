@@ -18,23 +18,21 @@ ul li{
 }
 
 /* Buttons */
-.create{
-	/* display: inline; */
-	/* position: absolute; */
-	width: 50px;
-	height: 50px;
-	margin-right: 0;
-	text-align: center;
-	background-color: grey;
-}
 
-.action{
+.buttonContainer{
 	display: flex;
 	flex-direction: row;
-	padding: 5px;
+	/* text-align: center; */
+	/* margin: auto; */
+	/* padding: 5px; */
 }
 .action-button{
-	margin: 10px;
+	/* margin: 10px; */
+	/* display: inline-block; */
+	/* height: 50px; */
+	margin: 0.5rem;
+	padding: 0.5rem;
+	/* text-align: center; */
 
 }
 
@@ -42,6 +40,8 @@ ul li{
 	width:100%;
 	text-align: center;
 	margin: auto;
-	background-co
-
+	/* background-co */
+}
+.selected{
+	border: 2px red solid;
 }

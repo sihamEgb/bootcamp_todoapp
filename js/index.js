@@ -13,7 +13,20 @@ initApp();
 
 // How I Do It
 
+function unselect(){
+	TODO.updateButton.style.display = "none";
+	TODO.deleteButton.style.display = "none";
+	if(TODO.selectedItem){
+		TODO.selectedItem.classList.remove('selected');
+	}
 
+	const title = document.getElementById('title');
+	const text = document.getElementById('text');
+	
+	title.value = "",
+	text.value = ""
+	TODO.selectedItem = null;
+}
 // init app buttons and listeners
 function initApp(){
 	TODO.createButton = document.querySelector('.create');
@@ -43,6 +56,8 @@ function initApp(){
 		}
 		console.log("in local storage ",obj);
 		addItem(obj);
+		TODO.items.push(obj);
+
 	}
 	TODO.counter = max ;
 	console.log(TODO.counter);
@@ -71,7 +86,6 @@ function addItem(newItem){
 	newDOMItem.append(id);
 	newDOMItem.append(title);
 	newDOMItem.append(text);
-	// newDOMItem.append(action);
 
 	newDOMItem.addEventListener('click',selectItem);
 
@@ -87,7 +101,6 @@ function createItem(event){
 	let newItem = {
 		id: TODO.counter,
 		title: title.value,
-		// title: `title${TODO.counter}`,
 		text: text.value,
 		date: new Date().toLocaleString(),
 		status: 'pending',
@@ -97,8 +110,8 @@ function createItem(event){
 	localStorage.setItem(newItem.id,myJsonObject);
 	console.log("adding to local storage ",localStorage);
 	addItem(newItem);
-	title.value = "",
-	text.value = ""
+	unselect();
+
 }
 // show extra data
 // date , status ...
@@ -115,9 +128,6 @@ function updateItem(event){
 		// input tag
 		const title = document.getElementById('title');
 		const text = document.getElementById('text');
-		// console.log("element to update",document.getElementById('id'));
-		// console.log("title",title.value);
-		// console.log("idValue",document.getElementById('id'));
 		
 
 		const elementItem = TODO.items[getElementIndexById(idValue)];
@@ -130,9 +140,9 @@ function updateItem(event){
 		elementToUpdate.getElementsByClassName('title')[0].innerHTML = title.value;
 		elementToUpdate.getElementsByClassName('text')[0].innerHTML = text.value;
 
+		unselect();
 	}
-	// elementItem.querySelector('.title') = title.value;
-	// console.log(id);
+
 
 }
 
@@ -154,27 +164,26 @@ function deleteItem(event){
 	// element to delete
 	const elementToDelete = TODO.selectedItem;
 	const id = elementToDelete.firstElementChild.innerHTML;
-	// console.log("id:" ,id);
 
 	// remove from array
 	const objToDeleteArr = TODO.items.splice(getElementIndexById(id),1);
 	// remove from DOM
 	elementToDelete.remove();	
 	localStorage.removeItem(objToDeleteArr[0].id);
+
+	unselect();
 }
 
-// focused item takes data
-// update TODO.selectedItem
-function selectItem(event){
 
+function selectItem(event){
+	unselect();
 	const focus = document.querySelector('.selectedItemContainer');
 	const selectedItem = event.currentTarget;
+
+	selectedItem.classList.add('selected');
 	const idValue = selectedItem.firstElementChild.dataset.id;
-	console.log("selectedItem ",selectedItem);
-	// console.log("id ",idValue);
-	// console.log(event.currentTarget.querySelector('.title').innerHTML);
+
 	const selectedObject = TODO.items[getElementIndexById(idValue)];
-	console.log("selectedObject ",selectedObject);
 
 	focus.querySelector('.title').value = selectedObject.title;
 	focus.querySelector('.text').value = selectedObject.text;
