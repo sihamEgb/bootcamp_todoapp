@@ -1,9 +1,53 @@
 const TODO = {
 	items:[],
+	// counter for id
 	counter: 1,
 	selectedItem: null,
+	updateButton: null,
+	createButton:null,
+	deleteButton:null,
 };
+// What I Do
+initApp();
 
+
+// How I Do It
+
+
+// init app buttons and listeners
+function initApp(){
+	TODO.createButton = document.querySelector('.create');
+	TODO.updateButton = document.querySelector('.update');
+	TODO.deleteButton = document.querySelector('.delete');
+
+	TODO.createButton.style.display = "block";
+	TODO.updateButton.style.display = "none";
+	TODO.deleteButton.style.display = "none";
+	
+	TODO.deleteButton.addEventListener('click',deleteItem);
+	TODO.updateButton.addEventListener('click',updateItem);	
+	TODO.createButton.addEventListener('click',createItem);
+
+	// update id to be max+1
+	let max = 0;
+	// init tasks from local storage
+	for (var i = 0; i < localStorage.length; i++)
+	{
+		// console.log("current key",key);
+	
+		const temp = localStorage.getItem(localStorage.key(i));
+		const obj = JSON.parse(temp);
+		if(obj.id > max)
+		{
+			max = obj.id;
+		}
+		console.log("in local storage ",obj);
+		addItem(obj);
+	}
+	TODO.counter = max ;
+	console.log(TODO.counter);
+
+}
 function addItem(newItem){
 
 	const newDOMItem = document.createElement('li');
@@ -23,40 +67,11 @@ function addItem(newItem){
 	text.classList.add('text');
 	text.innerHTML = newItem.text;
 
-	const action = document.createElement('div');
-	action.classList.add('action');
-
-	const deleteDiv = document.createElement('div');
-	const deleteButton = document.createElement('button');
-	deleteButton.classList.add('action-button');
-	deleteButton.classList.add('delete');
-	deleteButton.innerHTML = "delete";
-	deleteDiv.append(deleteButton);
-
-	const updateDiv = document.createElement('div');
-	const updateButton = document.createElement('button');
-	updateButton.classList.add('action-button');
-	updateButton.classList.add('update');
-	updateButton.innerHTML = "update";
-	updateDiv.append(updateButton);
-
-	// const readDiv = document.createElement('div');
-	// const readButton = document.createElement('button');
-	// readButton.classList.add('action-button');
-	// readButton.classList.add('read');
-	// readButton.innerHTML = "read";
-	// readDiv.append(readButton);
-
-	
-
-	// action.append(deleteDiv);
-	// action.append(updateDiv);
-	// action.append(readDiv);
 	
 	newDOMItem.append(id);
 	newDOMItem.append(title);
 	newDOMItem.append(text);
-	newDOMItem.append(action);
+	// newDOMItem.append(action);
 
 	newDOMItem.addEventListener('click',selectItem);
 
@@ -78,19 +93,15 @@ function createItem(event){
 		status: 'pending',
 	}
 	TODO.items.push(newItem);
-
+	const myJsonObject = JSON.stringify(newItem);
+	localStorage.setItem(newItem.id,myJsonObject);
+	console.log("adding to local storage ",localStorage);
 	addItem(newItem);
 	title.value = "",
 	text.value = ""
 }
 // show extra data
 // date , status ...
-// function readItem(event){
-// 	const elementToRead = event.currentTarget.parentElement.parentElement.parentElement;
-// 	const id = elementToRead.firstElementChild.innerHTML;
-// 	console.log("id:" ,elementToRead);
-
-// }
 // open as read but allow to update
 // title + text
 // date will be changed automatically
@@ -110,6 +121,8 @@ function updateItem(event){
 		
 
 		const elementItem = TODO.items[getElementIndexById(idValue)];
+
+		localStorage.setItem(elementItem.id,JSON.stringify(elementItem));
 		// update stored object
 		elementItem.title = title.value;
 		elementItem.text = text.value;
@@ -144,10 +157,10 @@ function deleteItem(event){
 	// console.log("id:" ,id);
 
 	// remove from array
-	TODO.items.splice(getElementIndexById(id),1);
+	const objToDeleteArr = TODO.items.splice(getElementIndexById(id),1);
 	// remove from DOM
-	elementToDelete.remove();
-	// console.log(event.target);
+	elementToDelete.remove();	
+	localStorage.removeItem(objToDeleteArr[0].id);
 }
 
 // focused item takes data
@@ -167,26 +180,16 @@ function selectItem(event){
 	focus.querySelector('.text').value = selectedObject.text;
 
 	TODO.selectedItem = selectedItem;
-	updateButton.style.display = "block";
-	deleteButton.style.display = "block";
+	TODO.updateButton.style.display = "block";
+	TODO.deleteButton.style.display = "block";
 	
 }
 
-// buttons listeners
 
-// init app
-const createButton = document.querySelector('.create');
-const updateButton = document.querySelector('.update');
-const deleteButton = document.querySelector('.delete');
 
-createButton.style.display = "block";
-updateButton.style.display = "none";
-deleteButton.style.display = "none";
 
-// readButton.addEventListener('click',readItem);
-	deleteButton.addEventListener('click',deleteItem);
-	updateButton.addEventListener('click',updateItem);	
-	createButton.addEventListener('click',createItem);
+
+
 
 
 
